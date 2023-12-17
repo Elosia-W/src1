@@ -34,12 +34,7 @@ public class Chessboard {
 
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
-                int count=0;
-                do {
-                    grid[i][j].setPiece(new ChessPiece(Util.RandomPick(new String[]{"💎", "⚪", "▲", "🔶"})));
-                    count=checkNearBy(grid,i,j);
-                    System.out.printf("%d, %d:%s count: %d\n", i, j,grid[i][j].getPiece().getName() , count);
-                }while (count>=3);
+                setGoodPiece(i,j);
 //                int count=3;
 //                while (count>=3) {
 //                    removeChessPiece(new ChessboardPoint(i,j));
@@ -49,6 +44,15 @@ public class Chessboard {
             }
         }
 
+    }
+    public int setGoodPiece(int i,int j){
+        int count=0;
+        do {
+            grid[i][j].setPiece(new ChessPiece(Util.RandomPick(new String[]{"💎", "⚪", "▲", "🔶"})));
+            count=checkNearBy(grid,i,j);
+            System.out.printf("%d, %d:%s count: %d\n", i, j,grid[i][j].getPiece().getName() , count);
+        }while (count>=3);
+        return count;
     }
 
     public ChessPiece getChessPieceAt(ChessboardPoint point) {

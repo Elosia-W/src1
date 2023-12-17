@@ -74,7 +74,7 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中添加标签
      */
     private void addLabel() {
-        this.statusLabel = new JLabel("Sample label");
+        this.statusLabel = new JLabel("Score:"+0);
         statusLabel.setLocation(HEIGTH, HEIGTH / 10);
         statusLabel.setSize(200, 60);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
@@ -96,7 +96,7 @@ public class ChessGameFrame extends JFrame {
     private void addHelloButton() {
         JButton button = new JButton("Restart");
         button.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Show hello world");
+//            JOptionPane.showMessageDialog(this, "Show hello world");
             gameController.restart();
         });
         button.setLocation(HEIGTH, HEIGTH / 10 + 120);
@@ -135,9 +135,15 @@ public class ChessGameFrame extends JFrame {
             gobangChess.setChessboard(gameController.changeIntoNum());
             String path = JOptionPane.showInputDialog(this, "Input Path here");
             System.out.println(path);
-            String baseFileName = path;
-            String uniqueFileName = generateUniqueFileName(baseFileName);
-            gobangChess.writeFileByFileWriter(uniqueFileName);
+
+            try {
+                String baseFileName = path;
+                String uniqueFileName = generateUniqueFileName(baseFileName);
+                gobangChess.writeFileByFileWriter(uniqueFileName);
+                statusLabel.setText("Saved | Score:"+gameController.getScore());
+            }catch (NullPointerException f) {
+            }
+
 
 //            gameController.loadGameFromFile(path);
         });
@@ -153,12 +159,15 @@ public class ChessGameFrame extends JFrame {
             System.out.println("Click load");
             String path = JOptionPane.showInputDialog(this, "Input Path here");
             System.out.println(path);
-            GobangChess gobangChess=new GobangChess();
-            List<String> lines = gobangChess.readFileByFileReader(path);
+            try {
+                GobangChess gobangChess = new GobangChess();
+                List<String> lines = gobangChess.readFileByFileReader(path);
 //        List<String> lines = gobangChess.readFileByFileReader("chessboard.txt");
-            gobangChess.convertToChessboard(lines);
-            gameController.changeIntoModel(gobangChess.getChessboard());
+                gobangChess.convertToChessboard(lines);
+                gameController.changeIntoModel(gobangChess.getChessboard());
 //            gameController.loadGameFromFile(path);
+            }catch (NullPointerException f) {
+            }
         });
     }
     private String generateUniqueFileName(String baseFileName) {

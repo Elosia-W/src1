@@ -12,6 +12,7 @@ public class GobangChess {
 
 
 
+
     public int[][] getChessboard() {
         return chessboard;
     }
@@ -90,6 +91,7 @@ public class GobangChess {
             sb.setLength(sb.length() - 1);
             lines.add(sb.toString());
         }
+
         return lines;
     }
     public void writeFileByFileWriter(String path) {

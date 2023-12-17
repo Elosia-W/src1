@@ -34,6 +34,7 @@ public class GameController implements GameListener {
 
     private JLabel statusLabel;
     public boolean isActive;
+    public boolean isAddable;
 
     public JLabel getStatusLabel() {
         return statusLabel;
@@ -51,6 +52,10 @@ public class GameController implements GameListener {
         view.registerController(this);
         view.initiateChessComponent(model);
         view.repaint();
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public void initialize() {
@@ -113,9 +118,9 @@ public class GameController implements GameListener {
         }
         else {
 //            System.out.printf("You need to select two adjacent points");
-            statusLabel.setText("didn't completely select");
+//            statusLabel.setText("didn't completely select");
             JOptionPane.showMessageDialog(ChessGameFrame.getFrames()[0], "You need to select two adjacent point");
-            statusLabel.setText("");
+//            statusLabel.setText("");
 
         }
     }
@@ -126,10 +131,8 @@ public class GameController implements GameListener {
         if (isActive) {
             if (selectedPoint != null && selectedPoint2 != null) {
                 elimination();
-
-            } else {
-                falling();
             }
+            else falling();
         }
         else {//add new piece
             adding();
@@ -137,9 +140,28 @@ public class GameController implements GameListener {
     }
 
     private void adding() {
+        int count = 0;
+        for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
+            for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
+                ChessboardPoint x = new ChessboardPoint(i, j);
+                if (model.getChessPieceAt(x) == null) {
+                    model.setChessPiece(x, new ChessPiece(Util.RandomPick(new String[]{"💎", "⚪", "▲", "🔶"})));
+                    count++;
+                }
+            }
+            view.removeAllChessComponentsAtGrids();
+            view.initiateChessComponent(model);
+            view.repaint();
+        }
+        if (count > 0) {
+            isActive = true;
+            selectedPoint=(new ChessboardPoint(0,0));
+            selectedPoint2=(new ChessboardPoint(8,8));
+        }
+//        else JOptionPane.showMessageDialog(null, "try next swap!");
+        else statusLabel.setText("Done | Score:"+score);
 
     }
-
     private void falling() {
 
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
@@ -188,7 +210,12 @@ public class GameController implements GameListener {
 
             this.statusLabel.setText("Score:" + score);
         } else {
-            onPlayerSwapChess();
+            try {
+                onPlayerSwapChess();
+            }catch (ArrayIndexOutOfBoundsException e){
+                isActive=false;
+            }
+
         }
         selectedPoint = null;
         selectedPoint2 = null;
@@ -266,6 +293,7 @@ public class GameController implements GameListener {
     }
 
     public void restart() {
+        score=0;
         model.removeAllChessPiece();
         model.initPieces();
         view.removeAllChessComponentsAtGrids();
@@ -273,7 +301,7 @@ public class GameController implements GameListener {
         view.repaint();
     }
     public int[][] changeIntoNum(){
-        int[][] num= new int[Constant.CHESSBOARD_ROW_SIZE.getNum()][Constant.CHESSBOARD_COL_SIZE.getNum()];
+        int[][] num= new int[Constant.CHESSBOARD_ROW_SIZE.getNum()+1][Constant.CHESSBOARD_COL_SIZE.getNum()];
         for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
             for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
                 ChessPiece x = model.getChessPieceAt(new ChessboardPoint(i,j));
@@ -281,9 +309,9 @@ public class GameController implements GameListener {
                 else if(x.getColor().equals(Color.white))num[i][j]=2;
                 else if(x.getColor().equals(Color.green))num[i][j]=3;
                 else if (x.getColor().equals(Color.orange))num[i][j]=4;
-                else num[i][j]=0;
             }
         }
+        num[Constant.CHESSBOARD_ROW_SIZE.getNum()][0]=score;
         return num;
     }
     public void changeIntoModel(int[][] num){
@@ -300,6 +328,8 @@ public class GameController implements GameListener {
                 }
             }
         }
+        score=num[Constant.CHESSBOARD_ROW_SIZE.getNum()][0];
+        statusLabel.setText("Loaded | Score:"+score);
         view.initiateChessComponent(model);
         view.repaint();
     }

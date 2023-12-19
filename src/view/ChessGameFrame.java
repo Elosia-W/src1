@@ -36,6 +36,7 @@ public class ChessGameFrame extends JFrame {
         setLayout(null);
 
 
+
         addChessboard();
         addLabel();
         addHelloButton();
@@ -74,11 +75,12 @@ public class ChessGameFrame extends JFrame {
      * 在游戏面板中添加标签
      */
     private void addLabel() {
-        this.statusLabel = new JLabel("Score:"+0);
+        this.statusLabel = new JLabel("statusLabel");
         statusLabel.setLocation(HEIGTH, HEIGTH / 10);
-        statusLabel.setSize(200, 60);
+        statusLabel.setSize(200, 120);
         statusLabel.setFont(new Font("Rockwell", Font.BOLD, 20));
         add(statusLabel);
+
     }
 
     public JLabel getStatusLabel() {
@@ -140,8 +142,10 @@ public class ChessGameFrame extends JFrame {
                 String baseFileName = path;
                 String uniqueFileName = generateUniqueFileName(baseFileName);
                 gobangChess.writeFileByFileWriter(uniqueFileName);
-                statusLabel.setText("Saved | Score:"+gameController.getScore());
+//                statusLabel.setText("Saved | Score:"+gameController.getScore());
+                updateStatusLabel("Saved");
             }catch (NullPointerException f) {
+
             }
 
 
@@ -185,6 +189,11 @@ public class ChessGameFrame extends JFrame {
             counter++;
         }
     }
+    public void updateStatusLabel(String status) {
+        // 更新文本
+        statusLabel.setText("<html>"+status+"<br>Difficulty"+gameController.getDifficulty()+"<br>Scores:" + gameController.getScore() + "<Steps:"+gameController.getSteps()+"</html>");
+    }
+
 
 
 

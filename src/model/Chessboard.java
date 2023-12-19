@@ -46,7 +46,7 @@ public class Chessboard {
 
     }
     public int setGoodPiece(int i,int j){
-        int count=0;
+        int count;
         do {
             grid[i][j].setPiece(new ChessPiece(Util.RandomPick(new String[]{"💎", "⚪", "▲", "🔶"})));
             count=checkNearBy(grid,i,j);

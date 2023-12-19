@@ -191,7 +191,10 @@ public class ChessGameFrame extends JFrame {
     }
     public void updateStatusLabel(String status) {
         // 更新文本
-        statusLabel.setText("<html>"+status+"<br>Difficulty"+gameController.getDifficulty()+"<br>Scores:" + gameController.getScore() + "<Steps:"+gameController.getSteps()+"</html>");
+        statusLabel.setText("<html>"+status
+                +"<br>Difficulty:"+gameController.getDifficulty()
+                +"<br>Scores:" + gameController.getScore()
+                +"<br>Steps:"+gameController.getSteps()+"</html>");
     }
 
 

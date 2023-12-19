@@ -183,6 +183,8 @@ public class GameController implements GameListener {
         else {
             updateStatusLabel("Done!");
             isChangeable = true;
+            //TODO:test the end
+//            if ()
         }
 
     }
@@ -259,6 +261,7 @@ public class GameController implements GameListener {
     @Override
     public void onPlayerClickChessPiece(ChessboardPoint point, ChessComponent component) {
         if (isChangeable) {
+            updateStatusLabel("selecting");
             if (selectedPoint2 != null) {
                 var distance2point1 = Math.abs(selectedPoint.getCol() - point.getCol()) + Math.abs(selectedPoint.getRow() - point.getRow());
                 var distance2point2 = Math.abs(selectedPoint2.getCol() - point.getCol()) + Math.abs(selectedPoint2.getRow() - point.getRow());
@@ -324,7 +327,7 @@ public class GameController implements GameListener {
                 component.setSelected(true);
                 component.repaint();
             }
-            updateStatusLabel("selecting");
+
         }
         else {
             JOptionPane.showMessageDialog(ChessGameFrame.getFrames()[0], "invalid!");
@@ -359,24 +362,43 @@ public class GameController implements GameListener {
             }
         }
         num[Constant.CHESSBOARD_ROW_SIZE.getNum()][0]=score;
+        num[Constant.CHESSBOARD_ROW_SIZE.getNum()][1]=step;
+        num[Constant.CHESSBOARD_ROW_SIZE.getNum()][2]=difficulty;
+        if (isActive) num[Constant.CHESSBOARD_ROW_SIZE.getNum()][3] = 1;
+        else num[Constant.CHESSBOARD_ROW_SIZE.getNum()][3] = 0;
+        if (isChangeable) num[Constant.CHESSBOARD_ROW_SIZE.getNum()][4] = 1;
+        else num[Constant.CHESSBOARD_ROW_SIZE.getNum()][4] = 0;
+        //
         return num;
     }
     public void changeIntoModel(int[][] num){
         model.removeAllChessPiece();
         view.removeAllChessComponentsAtGrids();
-        for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
-            for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
+        try {
+            for (int i = 0; i < Constant.CHESSBOARD_ROW_SIZE.getNum(); i++) {
+                for (int j = 0; j < Constant.CHESSBOARD_COL_SIZE.getNum(); j++) {
 //                ChessPiece x = model.getChessPieceAt(new ChessboardPoint(i,j));
-                switch (num[i][j]) {
-                    case 1 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("💎"));
-                    case 2 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("⚪"));
-                    case 3 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("▲"));
-                    case 4 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("🔶"));
+                    switch (num[i][j]) {
+                        case 1 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("💎"));
+                        case 2 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("⚪"));
+                        case 3 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("▲"));
+                        case 4 -> model.setChessPiece(new ChessboardPoint(i, j), new ChessPiece("🔶"));
+                    }
                 }
             }
+            score = num[Constant.CHESSBOARD_ROW_SIZE.getNum()][0];
+
+            step = num[Constant.CHESSBOARD_ROW_SIZE.getNum()][1];
+            difficulty = num[Constant.CHESSBOARD_ROW_SIZE.getNum()][2];
+            isActive = num[Constant.CHESSBOARD_ROW_SIZE.getNum()][3] == 1;
+            isChangeable = num[Constant.CHESSBOARD_ROW_SIZE.getNum()][4] == 1;
+            updateStatusLabel("Loaded");
+        }catch (ArrayIndexOutOfBoundsException e){
+            JOptionPane.showMessageDialog(null,"invalid input");
+            restart();
+
         }
-        score=num[Constant.CHESSBOARD_ROW_SIZE.getNum()][0];
-        updateStatusLabel("Loaded");
+
         view.initiateChessComponent(model);
         view.repaint();
     }
@@ -386,11 +408,22 @@ public class GameController implements GameListener {
     }
     public void updateStatusLabel(String status) {
         // 更新文本
-        statusLabel.setText("<html>"+status+"<br>Difficulty:"+difficulty+"<br>Scores:" + score+ "<br>Steps:"+step+"</html>");
+        statusLabel.setText("<html>"+status+"<br>Difficulty:"+getDifficulty()+"<br>Scores:" + score+ "<br>Steps:"+step+"</html>");
     }
 
     public String getDifficulty() {
-        return "default";
+        switch (difficulty) {
+            case 1, 2, 3 -> {
+                return "easy";
+            }
+            case 4, 5, 6 -> {
+                return "normal";
+            }
+            case 7, 8, 9 -> {
+                return "hard";
+            }
+        }
+        return "Default";
     }
     /*public void loadGameFromFile(String path) {
         try{
